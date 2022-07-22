@@ -11,7 +11,7 @@ package com.indra.ejerciciologin.modelo;
 public class IntentosFallidos extends Exception{
     
     
-   public IntentosFallidos(){
-        super("Numero de intentos agotados");
+   public IntentosFallidos(String mensaje){
+        super(mensaje);
     }
 }

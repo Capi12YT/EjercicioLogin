@@ -6,6 +6,8 @@ package com.indra.ejerciciologin.vista;
 
 import com.indra.ejerciciologin.logica.GestionaEmpleado;
 import com.indra.ejerciciologin.modelo.Empleado;
+import com.indra.ejerciciologin.modelo.IntentosFallidos;
+import com.indra.ejerciciologin.persistencia.CrearEmpleados;
 
 /**
  *
@@ -32,17 +34,23 @@ public class PanelLogin extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         name = new javax.swing.JTextField();
-        password = new javax.swing.JTextField();
         aceptar = new javax.swing.JButton();
         cancelar = new javax.swing.JButton();
         mensaje = new javax.swing.JLabel();
+        password = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 0, 153));
         jLabel1.setText("Nombre");
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 0, 153));
         jLabel2.setText("Contraseña");
 
+        aceptar.setBackground(new java.awt.Color(255, 255, 255));
+        aceptar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         aceptar.setText("Aceptar");
         aceptar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -50,7 +58,13 @@ public class PanelLogin extends javax.swing.JFrame {
             }
         });
 
+        cancelar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         cancelar.setText("Cancelar");
+        cancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -64,7 +78,7 @@ public class PanelLogin extends javax.swing.JFrame {
                         .addGap(101, 101, 101)
                         .addComponent(cancelar)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
@@ -89,11 +103,11 @@ public class PanelLogin extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(62, 62, 62)
+                .addGap(59, 59, 59)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(aceptar)
                     .addComponent(cancelar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addComponent(mensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(39, 39, 39))
         );
@@ -101,23 +115,30 @@ public class PanelLogin extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+        int contador =1;
     private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
-        Empleado empleado = new Empleado(name.getText(),password.getText());
-        
+        Empleado empleado = new Empleado(name.getText(),CrearEmpleados.getSHA256(password.getText()));
         try {
-        if (GestionaEmpleado.login(empleado)) {
-            mensaje.setText("Usuario en Base de datos");
-        }else{
-            //falta por completar
-        } 
+            if (GestionaEmpleado.login(empleado,contador)) {
+                mensaje.setText("Usuario en Base de datos");
+            }else{
+                mensaje.setText("Credenciales incorrecta  Intento: " + contador);
+                contador++;
+            } 
         }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
+        catch (IntentosFallidos e) {
+            //System.out.println(e.getMessage());
+            e.printStackTrace();
+            cancelarActionPerformed(evt);
         }
         
         
         
     }//GEN-LAST:event_aceptarActionPerformed
+
+    private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
+        this.setVisible(false);
+    }//GEN-LAST:event_cancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -161,6 +182,6 @@ public class PanelLogin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel mensaje;
     private javax.swing.JTextField name;
-    private javax.swing.JTextField password;
+    private javax.swing.JPasswordField password;
     // End of variables declaration//GEN-END:variables
 }

@@ -28,9 +28,6 @@ public class Conexion {
        {
         
             conx=DriverManager.getConnection(url, "root", "root");
-            if (conx != null) {
-		System.out.println("Conexión establecida");
-             }
            
         } catch (SQLException e) {
             System.err.println(e.getMessage());

@@ -16,21 +16,21 @@ import java.sql.*;
 public class GestionaEmpleado {
     
    
-    public static boolean login(Empleado empleado) throws IntentosFallidos {
-        int contador = 0;
+    public static boolean login(Empleado empleado,int contador) throws IntentosFallidos {
+  
         Connection con = Conexion.conexionBD();
         String query="select NAME,PASSWORD from empleados where NAME='"+empleado.getName()+"'"+" and PASSWORD='"+empleado.getPassword()+"'";
         try (Statement stmt=con.createStatement();
              ResultSet rs=stmt.executeQuery(query);){
-             if (rs.first() == true) {
+ 
+            if (rs.next() == true) {
                 return true;
             }else{
-               contador++;
                  if (contador == 3) {
-                     throw new IntentosFallidos();
+                     throw new IntentosFallidos("Numero de intentos agotados");
                  }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         
